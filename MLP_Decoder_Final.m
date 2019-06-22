@@ -25,7 +25,7 @@ K = size(G,1);
 
 p=length(find(H(1,:)));    %number of 1 in each row
 Check_Node_Threshold = .2;
-eta = .008;                  %train rate
+eta = .008;                  %Learning rate
 max_iteratin = 200;
 temp=zeros(size(H,1),p);
 SNR_dB_vector = 0:11;
@@ -41,9 +41,9 @@ SNR_dB_vector = 0:11;
  %% LDPC Encoder
  
 for l=1:6:length(data)
-  temp_encoded_data = data(l:l+5)*G;
+  temp_encoded_data = data(l:l+5)*G;         % multiplying each message by Generator matrix to produce related LDPC code
   for k=1:length(temp_encoded_data)
-      if mod(temp_encoded_data(k),2)==0
+      if mod(temp_encoded_data(k),2)==0      % in GF(2), only 0 or 1 is possible. So even numbers replaced by 0 and odd numbers replaced by1
           temp_encoded_data(k)=0;
       else
           temp_encoded_data(k)=1;
@@ -73,8 +73,9 @@ for s = 1:length(SNR_dB_vector)
 %     noise_varianc = 1 / SNR(s);
 %     noise_varianc_dB = 10 * log10( noise_varianc);
 %     noise = wgn(1,length(Modulated_Encoded_data),noise_varianc_dB,'complex');
-      Received_data = awgn(Modulated_Encoded_data,SNR_dB_vector(s));
 %     Received_data = Modulated_Encoded_data + noise;
+
+Received_data = awgn(Modulated_Encoded_data,SNR_dB_vector(s));
 
     for z=1:length(Encoded_data)                                   
         if Received_data(z) >= 0   
@@ -97,7 +98,7 @@ for s = 1:length(SNR_dB_vector)
         for k=1:p
             for m=1:size(H,1)              
                 c(m,:)=find(H(m,:));       %#ok
-                temp(m,k)=temp_encoded_data(c(m,k));       %findig bits who has role in calculating  each check nodes
+                temp(m,k)=temp_encoded_data(c(m,k));       %findig bits who have role in calculating  each check nodes
             end
         end
 
